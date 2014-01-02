@@ -1,6 +1,6 @@
 %{
-/*==============================================================================
- * Copyright (c) 2013 Liang Kun.
+/*=============================================================================
+ * Copyright (c) 2014 Liang Kun.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@
  *   Lexical scanner for schemer language.
  *
  * Author: liangkun@outlook.com
- *==============================================================================
+ *=============================================================================
  */
 %}

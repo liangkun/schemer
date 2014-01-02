@@ -17,7 +17,7 @@ features:
 Examples
 ================
 
-There are some code snippets of schemer. 
+There are some code snippets of schemer.
 
 .. code-block:: scm
 
@@ -30,6 +30,7 @@ There are some code snippets of schemer.
               (Node Tree(element_type) Tree(element_type))))
 
     ; pattern matching
+    (: height (-> (Tree t) Integer))
     (def (height (Leaf _)) 0) ; `_' means we donot care what is that.
     (def (height (Node left right))
          (+ 1 (max (height left)
@@ -42,3 +43,4 @@ Core Forms
 Followings are the core forms of schemer.
 
     #. (data ...) : Create an algebric data type.
+    #. (: name type) : Declare the type of a name (identifier)
