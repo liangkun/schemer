@@ -14,34 +14,18 @@
 # limitations under the License.
 #
 # CMakeLists.txt
-#   CMake rules to build schemer system.
+#   CMake rules to build libschemer and schemer executable.
 #
 # Author: liangkun@outlook.com
 #==============================================================================
 
-cmake_minimum_required(VERSION 2.8)
-project(schemer)
-
-# The version number.
-set(schemer_version_major 0)
-set(schemer_version_minor 1)
-
-enable_testing()
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
-
-# Find dependencies
-find_package(LLVM REQUIRED)
-find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
-
 BISON_TARGET(parser
-    ${PROJECT_SOURCE_DIR}/schemer.y
-    ${PROJECT_BINARY_DIR}/parser.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/schemer.y
+    ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
 )
 FLEX_TARGET(scanner
-    ${PROJECT_SOURCE_DIR}/schemer.l
-    ${PROJECT_BINARY_DIR}/scanner.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/schemer.l
+    ${CMAKE_CURRENT_BINARY_DIR}/scanner.cc
 )
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
 
@@ -51,15 +35,15 @@ set(CMAKE_CXX_FLAGS ${LLVM_CXXFLAGS})
 
 # Configuration file.
 configure_file(
-    ${PROJECT_SOURCE_DIR}/config.h.in
-    ${PROJECT_BINARY_DIR}/config.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(schemer
-    parser.cc
-    scanner.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/scanner.cc
 )
 
 add_executable(schemer-bin schemer.cc)
