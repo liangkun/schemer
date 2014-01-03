@@ -28,25 +28,46 @@ set(schemer_version_minor 1)
 
 enable_testing()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-    "${PROJECT_SOURCE_DIR}/cmake_modules")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 # Find dependencies
 find_package(LLVM REQUIRED)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+
+BISON_TARGET(parser
+    ${PROJECT_SOURCE_DIR}/schemer.y
+    ${PROJECT_BINARY_DIR}/parser.cc
+)
+FLEX_TARGET(scanner
+    ${PROJECT_SOURCE_DIR}/schemer.l
+    ${PROJECT_BINARY_DIR}/scanner.cc
+)
+ADD_FLEX_BISON_DEPENDENCY(scanner parser)
+
 include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 set(CMAKE_CXX_FLAGS ${LLVM_CXXFLAGS})
 
 # Configuration file.
 configure_file(
-    "${PROJECT_SOURCE_DIR}/config.h.in"
-    "${PROJECT_BINARY_DIR}/config.h"
+    ${PROJECT_SOURCE_DIR}/config.h.in
+    ${PROJECT_BINARY_DIR}/config.h
 )
 
-include_directories("${PROJECT_BINARY_DIR}")
+include_directories(${PROJECT_BINARY_DIR})
 
-add_executable(schemer "schemer.cc")
-target_link_libraries(schemer ${LLVM_LIBRARIES} ${LLVM_LDFLAGS})
+add_library(schemer
+    parser.cc
+    scanner.cc
+)
+
+add_executable(schemer-bin schemer.cc)
+set_target_properties(schemer-bin
+    PROPERTIES OUTPUT_NAME schemer
+)
+
+target_link_libraries(schemer-bin schemer ${LLVM_LIBRARIES} ${LLVM_LDFLAGS})
 
 add_test(schemer_runs schemer "-version")
 set_tests_properties(schemer_runs PROPERTIES
