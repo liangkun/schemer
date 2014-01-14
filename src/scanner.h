@@ -1,4 +1,3 @@
-%{
 //=============================================================================
 // Copyright (c) 2014 Liang Kun.
 //
@@ -14,47 +13,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// schemer.l
+// scanner.h
 //   Lexical scanner for schemer language.
 //
 // Author: liangkun@outlook.com
 //=============================================================================
 
-#include <string>
-#include "scanner.h"
+#ifndef SCHEMER_SCANNER_H_
+#define SCHEMER_SCANNER_H_
 
-#undef YY_DECL
-#define YY_DECL \
-    schemer::Parser::symbol_type schemer::Scanner::yylex(int)
+#ifndef yyFlexLexerOnce
+#include <FlexLexer.h>
+#endif
 
-#define YY_USER_ACTION m_loc.columns(yyleng);
+#include "parser.hh"
 
-%}
+namespace schemer {
 
-%option debug
-%option c++
-%option yyclass = "Scanner"
-%option nodefault
-%option noyywrap
+class Scanner : public yyFlexLexer {
+public:
+    Scanner(std::istream *in) : yyFlexLexer(in) {}
+    Parser::symbol_type yylex(int);
 
-blank [ \t]
+private:
+    int yylex();
 
-%%
+    Parser::location_type m_loc;
+};
 
-%{
-m_loc.step();
-%}
+}  // namespace schemer
 
-[_a-zA-Z][_a-zA-Z0-9]*    {
-    return schemer::Parser::make_IDENTIFIER(yytext, m_loc);
-}
-
-{blank}+    { m_loc.step(); }
-
-[\n]+    { m_loc.lines(yyleng); m_loc.step(); }
-
-.    { return schemer::Parser::make_ERROR("invalid character", m_loc); }
-
-<<EOF>>    { return schemer::Parser::make_END(m_loc); }
-
-%%
+#endif  // SCHEMER_SCANNER_H_

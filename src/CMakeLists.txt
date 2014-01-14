@@ -19,6 +19,15 @@
 # Author: liangkun@outlook.com
 #==============================================================================
 
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LLVM_INCLUDE_DIRS}
+)
+
+link_directories(${LLVM_LIBRARY_DIRS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LLVM_CXXFLAGS}")
+
 BISON_TARGET(parser
     ${CMAKE_CURRENT_SOURCE_DIR}/schemer.y
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
@@ -28,10 +37,6 @@ FLEX_TARGET(scanner
     ${CMAKE_CURRENT_BINARY_DIR}/scanner.cc
 )
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
-
-include_directories(${LLVM_INCLUDE_DIRS})
-link_directories(${LLVM_LIBRARY_DIRS})
-set(CMAKE_CXX_FLAGS ${LLVM_CXXFLAGS})
 
 # Configuration file.
 configure_file(

@@ -73,6 +73,10 @@ execute_process(
     OUTPUT_VARIABLE LLVM_CXXFLAGS
 )
 trim(LLVM_CXXFLAGS)
+if (${LLVM_CXXFLAGS} MATCHES "-fno-exceptions")
+    string(REGEX REPLACE "-fno-exceptions" "" LLVM_CXXFLAGS ${LLVM_CXXFLAGS})
+endif (${LLVM_CXXFLAGS} MATCHES "-fno-exceptions")
+
 set(LLVM_CXXFLAGS ${LLVM_CXXFLAGS} CACHE STRING "llvm cxxflags")
 
 execute_process(

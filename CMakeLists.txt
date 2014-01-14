@@ -29,6 +29,7 @@ set(schemer_version_minor 1)
 enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake_modules)
+set(CMAKE_CXX_FLAGS "-std=c++11 -fexceptions")
 
 # Find dependencies
 find_package(LLVM REQUIRED)

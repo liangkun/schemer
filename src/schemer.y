@@ -1,4 +1,4 @@
-%{
+%code requires {
 //=============================================================================
 // Copyright (c) 2014 Liang Kun.
 //
@@ -19,9 +19,42 @@
 //
 // Author: liangkun@outlook.com
 //=============================================================================
-extern int yylex();
-extern void yyerror(const char* msg);
-%}
+
+namespace schemer {
+    class Scanner;
+}  // namespace schemer
+
+}  /* %code requires */
+
+%skeleton "lalr1.cc"
+%require "3.0"
+%define api.namespace { schemer }
+%define parser_class_name { Parser }
+%define api.token.constructor
+%define api.value.type variant
+%define parse.assert
+%defines
+%locations
+%lex-param { Scanner* scanner }
+%parse-param { Scanner* scanner }
+
+%code {
+#include <string>
+
+namespace schemer {
+
+static Parser::symbol_type yylex(Scanner* scanner);
+
+}  // namespace schemer
+}  /* %code */
+
+/* token definitions */
+
+%token END 0 "end of file"
+%token <std::string> ERROR "internal error token"
+%token <std::string> IDENTIFIER "identifier"
+
+%printer { yyoutput << $$; } <*>
 
 %%
 
@@ -29,3 +62,12 @@ expr_list: /* empty */
 ;
 
 %%
+
+#include "scanner.h"
+namespace schemer {
+
+Parser::symbol_type yylex(Scanner* scanner) {
+    return scanner->yylex(0);
+}
+
+}  // namespace schemer
