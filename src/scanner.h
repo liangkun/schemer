@@ -22,6 +22,9 @@
 #ifndef SCHEMER_SCANNER_H_
 #define SCHEMER_SCANNER_H_
 
+#include <iostream>
+#include <string>
+
 #ifndef yyFlexLexerOnce
 #include <FlexLexer.h>
 #endif
@@ -32,12 +35,18 @@ namespace schemer {
 
 class Scanner : public yyFlexLexer {
 public:
-    Scanner(std::istream *in) : yyFlexLexer(in) {}
-    Parser::symbol_type yylex(int);
+    Scanner(std::istream* in, const std::string& file = "<anonymous>")
+            : yyFlexLexer(in), m_file(file), m_loc(&m_file) {}
+    virtual ~Scanner() {}
+
+    virtual Parser::symbol_type yylex(int);
+    const std::string& file() const { return m_file; }
+    const Parser::location_type& loc() const { return m_loc; }
 
 private:
-    int yylex();
+    virtual int yylex() { return yyFlexLexer::yylex(); }
 
+    std::string m_file;
     Parser::location_type m_loc;
 };
 

@@ -27,7 +27,13 @@ There are some code snippets of schemer.
     (def Tree
         (data (element_type)
               (Leaf element_type)
-              (Node Tree(element_type) Tree(element_type))))
+              (Node (Tree element_type) (Treeelement_type))))
+
+    ; Builtin List type.
+    (def List
+        (data (element_type)
+              (Cons element_type (List element_type))
+              Null))
 
     ; pattern matching
     (: height (-> (Tree t) Integer))
@@ -36,6 +42,10 @@ There are some code snippets of schemer.
          (+ 1 (max (height left)
                    (height right))))
 
+    (: length (-> (List t) Integer))
+    (def (length Null) 0)
+    (def (length (Cons _ rest)) (+ 1 (length rest)))
+
 
 Core Forms
 ================
@@ -43,4 +53,40 @@ Core Forms
 Followings are the core forms of schemer.
 
     #. (data ...) : Create an algebric data type.
+    #. (-> arg_types ... return_type) : Create a function type.
     #. (: name type) : Declare the type of a name (identifier)
+    #. (lambda (pattern) body) : Create a closure.
+    #. (case (test body)...) : Condition expression.
+    #. (fn args ...) : Closure application.
+    #. (reset ...) : reset operator in delimited continuation.
+    #. (shift k body) : shift operator in delimited continuation.
+
+
+Builtins
+================
+
+Followings are the schemer builtins.
+
+Types
+----------------
+
+    #. Bool : True / False.
+    #. Integer : integral numbers.
+    #. Real : double of c.
+    #. List[element_type] : list type.
+
+Functions
+----------------
+
+    #. + - * / : arithmatic functions on all numeric types.
+    #. % : mod on integral types.
+
+
+Virtual Machine
+================
+
+This section gives a brief introduction to the schemer virtual machine.
+
+Schemer virtual machine heavily depends on the LLVM infrastructure. In addition
+to the operations provided by LLVM, Schemer virtual machine provides the
+following intrinsic functions.

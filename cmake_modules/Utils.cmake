@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# StringUtils.cmake
-#   Common utils to process string in cmake.
+# Utils.cmake
+#   Common utils used in cmake.
 #
 # Author: liangkun@outlook.com
 #==============================================================================
@@ -29,3 +29,15 @@ macro(trim var)
         string(REGEX REPLACE "[ \t\r\n]+$" "" ${var} ${${var}})
     endif (${${var}} MATCHES "[ \t\r\n]+$")
 endmacro(trim var)
+
+# add a new gtest(using gtest)
+macro(add_gtest gtest_source)
+    string(REGEX REPLACE "(\\.cc)|(\\.cpp)" "" gtest_name ${gtest_source})
+    add_executable(${gtest_name} ${gtest_source})
+    target_link_libraries(${gtest_name}
+        schemer
+        ${LLVM_LIBRARIES}
+        ${GTEST_BOTH_LIBRARIES}
+    )
+    add_test(${gtest_name} ${gtest_name})
+endmacro(add_gtest source_file)

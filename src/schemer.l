@@ -28,7 +28,6 @@
     schemer::Parser::symbol_type schemer::Scanner::yylex(int)
 
 #define YY_USER_ACTION m_loc.columns(yyleng);
-
 %}
 
 %option debug
@@ -37,7 +36,9 @@
 %option nodefault
 %option noyywrap
 
+alphabet [_a-zA-Z~!%^&*+=|<>?/-]
 blank [ \t]
+digit [0-9]
 
 %%
 
@@ -45,7 +46,7 @@ blank [ \t]
 m_loc.step();
 %}
 
-[_a-zA-Z][_a-zA-Z0-9]*    {
+{alphabet}({alphabet}|{digit})*    {
     return schemer::Parser::make_IDENTIFIER(yytext, m_loc);
 }
 

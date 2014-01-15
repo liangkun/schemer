@@ -23,10 +23,8 @@
 #     LLVM_FOUND        - True if llvm is found
 #     LLVM_VERSION      - llvm version
 #     LLVM_INCLUDE_DIRS - where to find llvm header files
-#     LLVM_LIBRARY_DIRS - where to find llvm libraries
 #     LLVM_LIBRARIES    - list of llvm libraries to be linked against
 #     LLVM_CXXFLAGS     - llvm c++ compiler flags
-#     LLVM_LDFLAGS      - llvm linker flags
 
 if (${LLVM_FOUND})
     return()
@@ -38,7 +36,7 @@ if (NOT LLVM_CONFIG)
 endif (NOT LLVM_CONFIG)
 set(LLVM_FOUND "True" CACHE STRING "Found llvm")
 
-include(StringUtils)
+include(Utils)
 
 execute_process(
     COMMAND ${LLVM_CONFIG} --version
@@ -55,20 +53,6 @@ trim(LLVM_INCLUDE_DIRS)
 set(LLVM_INCLUDE_DIRS ${LLVM_INCLUDE_DIRS} CACHE STRING "llvm include dirs")
 
 execute_process(
-    COMMAND ${LLVM_CONFIG} --libdir
-    OUTPUT_VARIABLE LLVM_LIBRARY_DIRS
-)
-trim(LLVM_LIBRARY_DIRS)
-set(LLVM_LIBRARY_DIRS ${LLVM_LIBRARY_DIRS} CACHE STRING "llvm library dirs")
-
-execute_process(
-    COMMAND ${LLVM_CONFIG} --libs
-    OUTPUT_VARIABLE LLVM_LIBRARIES
-)
-trim(LLVM_LIBRARIES)
-set(LLVM_LIBRARIES ${LLVM_LIBRARIES} CACHE STRING "llvm libraries")
-
-execute_process(
     COMMAND ${LLVM_CONFIG} --cxxflags
     OUTPUT_VARIABLE LLVM_CXXFLAGS
 )
@@ -76,14 +60,22 @@ trim(LLVM_CXXFLAGS)
 if (${LLVM_CXXFLAGS} MATCHES "-fno-exceptions")
     string(REGEX REPLACE "-fno-exceptions" "" LLVM_CXXFLAGS ${LLVM_CXXFLAGS})
 endif (${LLVM_CXXFLAGS} MATCHES "-fno-exceptions")
-
 set(LLVM_CXXFLAGS ${LLVM_CXXFLAGS} CACHE STRING "llvm cxxflags")
 
 execute_process(
-    COMMAND ${LLVM_CONFIG} --system-libs
-    OUTPUT_VARIABLE LLVM_LDFLAGS
+    COMMAND ${LLVM_CONFIG} --libfiles
+    OUTPUT_VARIABLE LLVM_LIBRARIES
 )
-trim(LLVM_LDFLAGS)
-set(LLVM_LDFLAGS ${LLVM_LDFLAGS} CACHE STRING "llvm ldflags")
+trim(LLVM_LIBRARIES)
+execute_process(
+    COMMAND ${LLVM_CONFIG} --system-libs
+    OUTPUT_VARIABLE LLVM_SYSTEM_LIBS
+)
+trim(LLVM_SYSTEM_LIBS)
+set(LLVM_LIBRARIES "${LLVM_LIBRARIES} ${LLVM_SYSTEM_LIBS}")
+if (${LLVM_LIBRARIES} MATCHES " ")
+    string(REGEX REPLACE " " ";" LLVM_LIBRARIES ${LLVM_LIBRARIES})
+endif (${LLVM_LIBRARIES} MATCHES " ")
+set(LLVM_LIBRARIES ${LLVM_LIBRARIES} CACHE STRING "llvm libraries")
 
 message("-- Found LLVM: ${LLVM_CONFIG} (found version: ${LLVM_VERSION})")

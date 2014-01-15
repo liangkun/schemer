@@ -19,13 +19,15 @@
 # Author: liangkun@outlook.com
 #==============================================================================
 
+include(Utils)
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${GTEST_INCLUDE_DIRS}
     ${LLVM_INCLUDE_DIRS}
 )
 
-link_directories(${LLVM_LIBRARY_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LLVM_CXXFLAGS}")
 
 BISON_TARGET(parser
@@ -44,9 +46,8 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 add_library(schemer
+    ${CMAKE_CURRENT_SOURCE_DIR}/ast.cc
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
     ${CMAKE_CURRENT_BINARY_DIR}/scanner.cc
 )
@@ -56,10 +57,13 @@ set_target_properties(schemer-bin
     PROPERTIES OUTPUT_NAME schemer
 )
 
-target_link_libraries(schemer-bin schemer ${LLVM_LIBRARIES} ${LLVM_LDFLAGS})
+target_link_libraries(schemer-bin schemer ${LLVM_LIBRARIES})
 
-add_test(schemer_runs schemer "-version")
-set_tests_properties(schemer_runs PROPERTIES
+add_test(schemer-runs schemer "-version")
+set_tests_properties(schemer-runs PROPERTIES
     PASS_REGULAR_EXPRESSION
         "schemer.*${schemer_version_major}\\.${schemer_version_minor}.*"
 )
+
+add_gtest(schemer-test.cc)
+add_gtest(scanner-test.cc)
