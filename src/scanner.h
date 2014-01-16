@@ -37,6 +37,7 @@ class Scanner : public yyFlexLexer {
 public:
     Scanner(std::istream* in, const std::string& file = "<anonymous>")
             : yyFlexLexer(in), m_file(file), m_loc(&m_file) {}
+
     virtual ~Scanner() {}
 
     virtual Parser::symbol_type yylex(int);

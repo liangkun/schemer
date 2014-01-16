@@ -40,6 +40,7 @@ namespace schemer {
 
 %code {
 #include <string>
+#include "ast.h"
 
 namespace schemer {
 
@@ -49,10 +50,20 @@ static Parser::symbol_type yylex(Scanner* scanner);
 }  /* %code */
 
 /* token definitions */
-
-%token END 0 "end of file"
-%token <std::string> ERROR "internal error token"
-%token <std::string> IDENTIFIER "identifier"
+%token kAnonymouse "_"
+%token kCase "case"
+%token kColon ":"
+%token kData "data(keyword)"
+%token <std::string> kError "lexing error"
+%token kEnd 0 "end of input stream"
+%token kFalse "false"
+%token <std::string> kFloatLiteral "float"
+%token <std::string> kIdentifier "identifier"
+%token <std::string> kIntegerLiteral "integer"
+%token kLambda "lambda"
+%token kReset "reset"
+%token kShift "shift"
+%token kTrue "true"
 
 %printer { yyoutput << $$; } <*>
 

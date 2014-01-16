@@ -37,25 +37,36 @@
 %option noyywrap
 
 alphabet [_a-zA-Z~!%^&*+=|<>?/-]
-blank [ \t]
-digit [0-9]
+blank    [ \t]
+digit    [0-9]
 
 %%
 
 %{
+// code executed on every token.
 m_loc.step();
 %}
 
+"False"     { return Parser::make_kFalse(m_loc); }
+"True"      { return Parser::make_kTrue(m_loc); }
+"_"         { return Parser::make_kAnonymouse(m_loc); }
+":"         { return Parser::make_kColon(m_loc); }
+"case"      { return Parser::make_kCase(m_loc); }
+"data"      { return Parser::make_kData(m_loc); }
+"lambda"    { return Parser::make_kLambda(m_loc); }
+"reset"     { return Parser::make_kReset(m_loc); }
+"shift"     { return Parser::make_kShift(m_loc); }
+
+ /* numbers must goes before identifier */
+[+-]?{digit}+    { return Parser::make_kIntegerLiteral(yytext, m_loc); }
+
 {alphabet}({alphabet}|{digit})*    {
-    return schemer::Parser::make_IDENTIFIER(yytext, m_loc);
+    return Parser::make_kIdentifier(yytext, m_loc);
 }
 
 {blank}+    { m_loc.step(); }
-
-[\n]+    { m_loc.lines(yyleng); m_loc.step(); }
-
-.    { return schemer::Parser::make_ERROR("invalid character", m_loc); }
-
-<<EOF>>    { return schemer::Parser::make_END(m_loc); }
+[\n]+       { m_loc.lines(yyleng); m_loc.step(); }
+.           { return Parser::make_kError("invalid character", m_loc); }
+<<EOF>>     { return Parser::make_kEnd(m_loc); }
 
 %%

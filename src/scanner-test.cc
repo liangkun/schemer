@@ -37,19 +37,18 @@ TEST(ScannerTest, Identifiers) {
     istringstream ss("_ name ->");
     Scanner scanner(&ss);
     symbol_type symbol0 = scanner.yylex(0);
-    ASSERT_EQ(token::IDENTIFIER, symbol0.token());
-    ASSERT_STREQ("_", symbol0.value.as<string>().c_str());
+    ASSERT_EQ(token::kAnonymouse, symbol0.token());
 
     symbol_type symbol1 = scanner.yylex(0);
-    ASSERT_EQ(token::IDENTIFIER, symbol1.token());
+    ASSERT_EQ(token::kIdentifier, symbol1.token());
     ASSERT_STREQ("name", symbol1.value.as<string>().c_str());
 
     symbol_type symbol2 = scanner.yylex(0);
-    ASSERT_EQ(token::IDENTIFIER, symbol2.token());
+    ASSERT_EQ(token::kIdentifier, symbol2.token());
     ASSERT_STREQ("->", symbol2.value.as<string>().c_str());
 
     symbol_type symbol3 = scanner.yylex(0);
-    ASSERT_EQ(token::END, symbol3.token());
+    ASSERT_EQ(token::kEnd, symbol3.token());
 }
 
 }  // anonymous namespace

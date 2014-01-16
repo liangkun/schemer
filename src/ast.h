@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 // ast.h
-//   Base class of abstract syntax tree for schemer.
+//   Base class of abstract syntax tree.
 //
 // Author: liangkun@outlook.com
 //=============================================================================
@@ -22,13 +22,14 @@
 #ifndef SCHEMER_AST_H_
 #define SCHEMER_AST_H_
 
-#include <cassert>
 #include <memory>
 #include <vector>
 
 namespace schemer {
 
-// Ast is the base class of the schemer's abstract syntax tree.
+// Ast is the base class of the schemer's abstract syntax tree (node).
+//
+// Each ast
 class Ast {
 public:
     enum Kind {
@@ -40,7 +41,6 @@ public:
     Ast* parent() { return m_parent; }
     std::vector<std::unique_ptr<Ast>>& children() { return m_children; }
     Ast* push_back(Ast* child) {
-        assert(child->parent() == nullptr);
         child->SetParent(this);
         m_children.push_back(std::unique_ptr<Ast>(child));
     }
